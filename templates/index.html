@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}VisionMatch - Smart College Lost & Found System{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <h1 class="hero-title">VisionMatch</h1>
+    <p class="hero-subtitle">
+        AI-Powered Smart College Lost &amp; Found System using Gemini Vector Embeddings and FAISS Similarity Search.
+    </p>
+    <div class="hero-buttons">
+        <a href="/report" class="btn btn-primary">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Report Lost / Found Item
+        </a>
+        <a href="/search" class="btn btn-secondary">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            Search for Item
+        </a>
+    </div>
+</section>
+
+<!-- Features Grid -->
+<div class="features-grid">
+    <div class="feature-card">
+        <div class="feature-icon">📷</div>
+        <h3 class="feature-title">Image Search</h3>
+        <p class="feature-desc">
+            Upload a photo of a missing or found item to instantaneously discover visually similar items on campus.
+        </p>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3 class="feature-title">AI Embeddings</h3>
+        <p class="feature-desc">
+            Powered by Google Gemini multimodal embeddings and FAISS index for high-accuracy visual matching.
+        </p>
+    </div>
+
+    <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <h3 class="feature-title">Item Details</h3>
+        <p class="feature-desc">
+            Store location, category, date, and contact details seamlessly linked in MySQL database.
+        </p>
+    </div>
+</div>
+{% endblock %}

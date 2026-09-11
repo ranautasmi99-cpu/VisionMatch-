@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Multimodal Search Results - VisionMatch{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Multimodal Search Results</h1>
+    <p class="page-subtitle">Results ranked by Final Score combining Image Similarity (60%), Text Similarity (25%), and Metadata Score (15%).</p>
+</div>
+
+<!-- Query Summary Banner -->
+<div class="query-summary">
+    {% if query_image %}
+        <img src="/{{ query_image.replace('\\', '/') }}" alt="Uploaded Query Image" class="query-img">
+    {% endif %}
+    <div>
+        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.25rem;">Search Criteria Processed</h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+            {% if query_text %}
+                <strong>Search Text:</strong> "{{ query_text }}" &bull;
+            {% endif %}
+            {% if matches %}
+                Found <strong>{{ matches|length }}</strong> matching item(s) ranked by Final Multimodal Score.
+            {% else %}
+                No matching items found.
+            {% endif %}
+        </p>
+    </div>
+</div>
+
+{% if matches %}
+    <div class="results-grid">
+        {% for match in matches %}
+            <div class="result-card">
+                <div class="result-img-container">
+                    <img src="/{{ match.image_path.replace('\\', '/') }}" alt="{{ match.item.name if match.item else 'Item' }}" class="result-img">
+                </div>
+                <div class="result-body">
+                    <div class="result-header">
+                        <h3 class="result-title">{{ match.item.name if match.item else 'Unknown Item' }}</h3>
+                        <span class="badge {% if match.item and match.item.status|lower == 'lost' %}badge-lost{% else %}badge-found{% endif %}">
+                            {{ match.item.status if match.item else 'N/A' }}
+                        </span>
+                    </div>
+
+                    <div>
+                        <span class="category-tag">📂 {{ match.item.category if match.item else 'Category N/A' }}</span>
+                    </div>
+
+                    <p class="result-desc">
+                        {{ match.item.description if match.item else 'No description available.' }}
+                    </p>
+
+                    <div class="meta-info">
+                        <div><strong>📍 Location:</strong> {{ match.item.location if match.item else 'N/A' }}</div>
+                        <div><strong>📅 Date:</strong> {{ match.item.item_date if match.item else 'N/A' }}</div>
+                    </div>
+
+                    <!-- Multimodal Score Breakdown -->
+                    <div style="background-color: #f8fafc; border: 1px solid var(--card-border); border-radius: var(--radius-sm); padding: 0.75rem; margin-top: 1rem; font-size: 0.85rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                            <span>🖼️ Image Similarity (60%):</span>
+                            <strong>{{ "%.2f"|format(match.image_similarity * 100) }}%</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                            <span>📝 Text Similarity (25%):</span>
+                            <strong>{{ "%.2f"|format(match.text_similarity * 100) }}%</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>🏷️ Metadata Score (15%):</span>
+                            <strong>{{ "%.2f"|format(match.metadata_score * 100) }}%</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-top: 1px solid #e2e8f0; padding-top: 0.4rem; color: var(--primary); font-weight: 700; font-size: 0.95rem;">
+                            <span>🏆 Final Match Score:</span>
+                            <span>{{ "%.2f"|format(match.final_score * 100) }}%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="card" style="text-align: center; padding: 3rem 1.5rem; margin-bottom: 2rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+        <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-dark);">No Visually or Textually Similar Items Found</h2>
+        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+            No registered items matched your search criteria closely enough.
+        </p>
+        <a href="/search" class="btn btn-action-primary">Try Another Search</a>
+    </div>
+{% endif %}
+
+<div style="text-align: center; margin-top: 2rem;">
+    <a href="/search" class="btn btn-secondary" style="background-color: #ffffff; color: var(--text-dark); border: 1px solid var(--card-border);">
+        &larr; Execute Another Search
+    </a>
+</div>
+{% endblock %}

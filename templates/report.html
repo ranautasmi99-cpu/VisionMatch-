@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Report Item - VisionMatch{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Report Lost or Found Item</h1>
+    <p class="page-subtitle">Submit item details and upload a photo to register it in the Lost &amp; Found system.</p>
+</div>
+
+<div class="card">
+    {% if success %}
+        <div class="alert alert-success">
+            <strong>Success!</strong> Item reported successfully! (ID: {{ item_id }})
+        </div>
+    {% endif %}
+
+    {% if error %}
+        <div class="alert alert-danger">
+            <strong>Error:</strong> {{ error }}
+        </div>
+    {% endif %}
+
+    <form action="/report" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="name">Item Name *</label>
+            <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Black Wireless Earbuds, Blue Backpack" required>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+                <label for="category">Category *</label>
+                <select id="category" name="category" class="form-control" required>
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Accessories">Accessories</option>
+                    <option value="Clothing">Clothing</option>
+                    <option value="Keys">Keys</option>
+                    <option value="Books & Notes">Books &amp; Notes</option>
+                    <option value="Documents / ID Cards">Documents / ID Cards</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="status">Status *</label>
+                <select id="status" name="status" class="form-control" required>
+                    <option value="Lost">Lost (Looking for item)</option>
+                    <option value="Found">Found (Item handed in)</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+                <label for="location">Location *</label>
+                <input type="text" id="location" name="location" class="form-control" placeholder="e.g. Central Library 2nd Floor, Block C" required>
+            </div>
+
+            <div class="form-group">
+                <label for="item_date">Date *</label>
+                <input type="date" id="item_date" name="item_date" class="form-control" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Detailed Description *</label>
+            <textarea id="description" name="description" class="form-control" placeholder="Provide distinct features, brand name, color, or condition..." required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="image">Item Image (JPG, JPEG, PNG) *</label>
+            <input type="file" id="image" name="image" class="form-control" accept=".jpg,.jpeg,.png" required>
+        </div>
+
+        <button type="submit" class="btn btn-action-primary" style="width: 100%; margin-top: 1rem;">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Submit Item Report
+        </button>
+    </form>
+</div>
+{% endblock %}

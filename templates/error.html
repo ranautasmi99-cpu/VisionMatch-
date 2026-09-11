@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}{{ error_title|default("Error") }} - VisionMatch{% endblock %}
+
+{% block content %}
+<div class="card" style="text-align: center; padding: 3.5rem 2rem; max-width: 600px; margin: 3rem auto;">
+    <div style="font-size: 3.5rem; color: #ef4444; margin-bottom: 1rem;">⚠️</div>
+    <h1 style="font-size: 2rem; font-weight: 800; color: var(--text-dark); margin-bottom: 0.5rem;">
+        {{ error_title|default("An Error Occurred") }}
+    </h1>
+    <p style="color: var(--text-muted); font-size: 1.05rem; margin-bottom: 2rem; line-height: 1.6;">
+        {{ error_message|default("Something went wrong while processing your request. Please try again.") }}
+    </p>
+    <div style="display: flex; gap: 1rem; justify-content: center;">
+        <a href="/" class="btn btn-action-primary">Go to Home Page</a>
+        <a href="/search" class="btn btn-secondary" style="background-color: #ffffff; color: var(--text-dark); border: 1px solid var(--card-border);">Try Search</a>
+    </div>
+</div>
+{% endblock %}
