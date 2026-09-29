@@ -6,7 +6,7 @@ import numpy as np
 from gimini_embedings import get_image_embedding, get_text_embedding
 
 
-FAISS_FOLDER = "faiss_data"
+FAISS_FOLDER = os.getenv("FAISS_INDEX_PATH", "faiss_data")
 
 INDEX_FILE = os.path.join(
     FAISS_FOLDER,

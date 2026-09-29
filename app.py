@@ -34,9 +34,9 @@ app.register_blueprint(notifications_bp)
 app.register_blueprint(matching_bp)
 
 # Folders for uploads & temporary query images
-QUERY_FOLDER = "query_images"
-TEST_FOLDER = "test_images"
-UPLOAD_FOLDER = os.path.join("static", "uploads")
+QUERY_FOLDER = os.getenv("QUERY_FOLDER", "query_images")
+TEST_FOLDER = os.getenv("TEST_FOLDER", "test_images")
+UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", os.path.join("static", "uploads"))
 
 os.makedirs(QUERY_FOLDER, exist_ok=True)
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -214,4 +214,5 @@ def internal_server_error(e):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.getenv("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)
