@@ -54,7 +54,36 @@ def serve_test_image(filename):
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    from database import get_connection
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    # Fetch stats
+    cursor.execute("SELECT COUNT(*) as c FROM items")
+    total_items = cursor.fetchone()['c']
+    
+    cursor.execute("SELECT COUNT(*) as c FROM items WHERE status = 'Lost'")
+    lost_items = cursor.fetchone()['c']
+    
+    cursor.execute("SELECT COUNT(*) as c FROM items WHERE status = 'Found'")
+    found_items = cursor.fetchone()['c']
+    
+    cursor.execute("SELECT COUNT(*) as c FROM match_alerts")
+    match_alerts = cursor.fetchone()['c']
+    
+    # Fetch 6 most recent items
+    cursor.execute("SELECT * FROM items ORDER BY created_at DESC LIMIT 6")
+    recent_items = cursor.fetchall()
+    
+    cursor.close()
+    conn.close()
+    
+    return render_template("index.html", 
+                           total_items=total_items, 
+                           lost_items=lost_items, 
+                           found_items=found_items, 
+                           match_alerts=match_alerts, 
+                           recent_items=recent_items)
 
 
 from werkzeug.utils import secure_filename

@@ -3,24 +3,35 @@
 {% block title %}Notifications - VisionMatch{% endblock %}
 
 {% block content %}
-<div class="notifications-container" style="max-width: 800px; margin: 2rem auto; padding: 2rem; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-    <h2>Notifications</h2>
-    
+<div class="mb-4">
+    <h1 style="font-size: 2rem; color: #1e293b; margin-bottom: 0.5rem;">Notifications</h1>
+    <p class="text-muted">Updates about your reported items and matches.</p>
+</div>
+
+<div class="card" style="padding: 0; overflow: hidden; max-width: 800px;">
     {% if notifications %}
-        <ul style="list-style-type: none; padding: 0;">
+        <ul style="list-style-type: none; margin: 0; padding: 0;">
         {% for notif in notifications %}
-            <li style="border-bottom: 1px solid #eee; padding: 1rem 0; {% if not notif.is_read %}background-color: #f0f8ff; border-left: 4px solid #007bff; padding-left: 1rem;{% endif %}">
-                <a href="{{ url_for('notifications.read', notif_id=notif.id) }}" style="text-decoration: none; color: inherit; display: block;">
-                    <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                        <p style="margin: 0; font-weight: {% if not notif.is_read %}bold{% else %}normal{% endif %};">{{ notif.text }}</p>
-                        <small style="color: #888;">{{ notif.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+            <li style="border-bottom: 1px solid var(--border-color); {% if not notif.is_read %}background-color: #f0fdfa; border-left: 4px solid var(--primary);{% else %}border-left: 4px solid transparent;{% endif %}">
+                <a href="{{ url_for('notifications.read', notif_id=notif.id) }}" style="display: block; padding: 1.5rem; text-decoration: none; color: inherit; transition: background-color 0.2s;">
+                    <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;">
+                        <p style="margin: 0; font-size: 1.05rem; color: var(--text-main); font-weight: {% if not notif.is_read %}600{% else %}400{% endif %}; line-height: 1.4;">
+                            {{ notif.text }}
+                        </p>
+                        <small style="color: var(--text-muted); font-size: 0.85rem; white-space: nowrap;">
+                            {{ notif.created_at.strftime('%b %d, %H:%M') }}
+                        </small>
                     </div>
                 </a>
             </li>
         {% endfor %}
         </ul>
     {% else %}
-        <p>You have no notifications.</p>
+        <div style="padding: 4rem 2rem; text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;">🔔</div>
+            <h2 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--text-main);">No notifications yet</h2>
+            <p class="text-muted">We'll let you know when there's an update on your items.</p>
+        </div>
     {% endif %}
 </div>
 {% endblock %}

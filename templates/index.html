@@ -1,54 +1,476 @@
 {% extends "base.html" %}
 
-{% block title %}VisionMatch - Smart College Lost & Found System{% endblock %}
+{% block title %}VisionMatch - Campus Lost & Found{% endblock %}
+
+{% block extra_head %}
+<style>
+    .hero-badge {
+        display: inline-block;
+        background-color: #f0fdfa;
+        color: var(--primary);
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        border: 1px solid #ccfbf1;
+    }
+    
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 1rem;
+        letter-spacing: -0.025em;
+        line-height: 1.1;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.15rem;
+        color: var(--text-muted);
+        margin-bottom: 2rem;
+        max-width: 600px;
+    }
+    
+    .search-card {
+        background-color: #ffffff;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        margin-bottom: 3rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 4rem;
+    }
+
+    .stat-card {
+        background-color: #ffffff;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        background-color: #f1f5f9;
+        color: var(--primary);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .how-it-works {
+        background-color: #ffffff;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: 2.5rem;
+        margin-bottom: 4rem;
+    }
+
+    .steps-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .step-item {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .step-number {
+        width: 32px;
+        height: 32px;
+        background-color: var(--primary);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .reports-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .filter-tabs {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .filter-tab {
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--border-color);
+        background-color: #ffffff;
+        color: var(--text-muted);
+        border-radius: 9999px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .filter-tab.active {
+        background-color: var(--primary);
+        color: #ffffff;
+        border-color: var(--primary);
+    }
+    
+    .cta-banner {
+        background-color: #f8fafc;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: 2.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4rem;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+    }
+    
+    /* Result Card Adjustments */
+    .result-card {
+        height: 100%;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
-<section class="hero-section">
-    <h1 class="hero-title">VisionMatch</h1>
-    <p class="hero-subtitle">
-        AI-Powered Smart College Lost &amp; Found System using Gemini Vector Embeddings and FAISS Similarity Search.
-    </p>
-    <div class="hero-buttons">
-        <a href="/report" class="btn btn-primary">
-            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-            </svg>
-            Report Lost / Found Item
+<div style="margin-top: 3rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 2rem;">
+        <div style="flex: 1; min-width: 300px;">
+            <div class="hero-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle; margin-right: 4px;">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                College Lost & Found
+            </div>
+            <h1 class="hero-title">Lost something on campus? <span style="color: var(--primary);">We'll help you spot it.</span></h1>
+            <p class="hero-subtitle">Search by photo, visual descriptors, or browse live recovery reports across university facilities.</p>
+        </div>
+        <div style="display: flex; gap: 1rem;">
+            <a href="{{ url_for('search') if 'search' in request.endpoint else '/search' }}" class="btn btn-outline" style="background-color: #ffffff;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                Search Items
+            </a>
+            <a href="{{ url_for('report') if 'report' in request.endpoint else '/report' }}" class="btn btn-outline" style="background-color: #ffffff;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Quick Report
+            </a>
+        </div>
+    </div>
+
+    <!-- Search Area -->
+    <div class="search-card">
+        <form action="/search" method="POST" enctype="multipart/form-data" id="search-form" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            
+            <div style="display: grid; grid-template-columns: minmax(250px, 1fr) 2fr; gap: 2rem;">
+                
+                <!-- Photo Upload Box -->
+                <div class="dropzone" id="dropzone" onclick="document.getElementById('image-input').click();" style="margin: 0; height: 100%; border-color: #e2e8f0; border-width: 2px;">
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div style="width: 48px; height: 48px; background-color: #f0fdfa; color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                        </div>
+                        <h4 style="font-size: 1.05rem; margin-bottom: 0.25rem;">Visual Photo Match</h4>
+                        <p class="text-muted" style="font-size: 0.85rem;">Drag snapshot or browse file</p>
+                    </div>
+                    <input type="file" id="image-input" name="image" accept=".jpg,.jpeg,.png" style="display: none;" onchange="handleFileSelect(this.files)">
+                </div>
+                
+                <!-- Right Side Inputs -->
+                <div style="display: flex; flex-direction: column; justify-content: space-between;">
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label for="query_text" class="form-label" style="font-size: 0.85rem; color: var(--text-muted);">Keywords / Visual Clues</label>
+                        <input type="text" id="query_text" name="query_text" class="form-control" placeholder="e.g. Navy Hydro Flask with NASA sticker, Matte Black Sony Headphones..." style="background-color: #f8fafc;">
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="category" class="form-label" style="font-size: 0.85rem; color: var(--text-muted);">Category</label>
+                            <select id="category" name="category" class="form-select" style="background-color: #f8fafc;">
+                                <option value="">All Item Categories</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Accessories">Accessories</option>
+                                <option value="Clothing">Clothing</option>
+                                <option value="Keys">Keys</option>
+                                <option value="Books & Notes">Books &amp; Notes</option>
+                                <option value="Documents / ID Cards">Documents / ID Cards</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+            
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="location" class="form-label" style="font-size: 0.85rem; color: var(--text-muted);">Campus Location</label>
+                            <input type="text" id="location" name="location" class="form-control" placeholder="Everywhere on Campus" style="background-color: #f8fafc;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Box -->
+            <div id="preview-box" style="display: none; padding: 1rem; background: #f8fafc; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Selected Photo:</p>
+                <img id="preview-img" src="" alt="Preview" style="height: 60px; border-radius: 4px; object-fit: cover;">
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; align-items: center; border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 0.5rem;">
+                <button type="submit" class="btn btn-primary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.5rem;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    Search Campus Database
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+            </div>
+            <div>
+                <div style="font-size: 1.25rem; font-weight: 700; color: #1e293b;">{{ total_items }} Items</div>
+                <div style="font-size: 0.85rem; color: var(--text-muted);">Total reported</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg>
+            </div>
+            <div>
+                <div style="font-size: 1.25rem; font-weight: 700; color: #1e293b;">{{ lost_items }} Items</div>
+                <div style="font-size: 0.85rem; color: var(--text-muted);">Currently lost</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            </div>
+            <div>
+                <div style="font-size: 1.25rem; font-weight: 700; color: #1e293b;">{{ found_items }} Items</div>
+                <div style="font-size: 0.85rem; color: var(--text-muted);">Currently found</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            </div>
+            <div>
+                <div style="font-size: 1.25rem; font-weight: 700; color: #1e293b;">{{ match_alerts }} Alerts</div>
+                <div style="font-size: 0.85rem; color: var(--text-muted);">Matches created</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- How It Works -->
+    <div class="how-it-works">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; margin-bottom: 1rem;">
+            <h3 style="font-size: 0.9rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted);">FAST CAMPUS RECOVERY PROCESS</h3>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Safe &bull; Private &bull; Smart AI Matching</span>
+        </div>
+        
+        <div class="steps-grid">
+            <div class="step-item">
+                <div class="step-number">1</div>
+                <div>
+                    <h4 style="font-size: 1.05rem; margin-bottom: 0.5rem; color: #1e293b;">Snap or Upload</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">Report a lost or found item with a photo and description.</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-number">2</div>
+                <div>
+                    <h4 style="font-size: 1.05rem; margin-bottom: 0.5rem; color: #1e293b;">Get Matches</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">The system compares photos and text and ranks the closest items.</p>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-number">3</div>
+                <div>
+                    <h4 style="font-size: 1.05rem; margin-bottom: 0.5rem; color: #1e293b;">Connect Safely</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">Chat with the owner or finder. Phone and email are never shown.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Reports -->
+    <div class="reports-header">
+        <div>
+            <h2 style="font-size: 1.5rem; color: #1e293b; margin-bottom: 0.25rem;">Recent Campus Reports</h2>
+            <p class="text-muted" style="font-size: 0.95rem; margin: 0;">Latest entries logged across campus.</p>
+        </div>
+        <div class="filter-tabs">
+            <button class="filter-tab active" onclick="filterItems('All')">All Reports</button>
+            <button class="filter-tab" onclick="filterItems('Found')">Recently Found</button>
+            <button class="filter-tab" onclick="filterItems('Lost')">Recently Lost</button>
+        </div>
+    </div>
+
+    {% if recent_items %}
+        <div class="results-grid" id="recent-items-grid">
+            {% for item in recent_items %}
+                <div class="result-card item-card" data-status="{{ item.status }}">
+                    <div class="result-img-container" style="position: relative;">
+                        <img src="/{{ item.image_path.replace('\\', '/') }}" alt="{{ item.name }}" class="result-img">
+                        <span class="badge {% if item.status|lower == 'lost' %}badge-lost{% else %}badge-found{% endif %}" style="position: absolute; top: 1rem; left: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            {% if item.status|lower == 'lost' %}REPORTED LOST{% else %}FOUND ITEM{% endif %}
+                        </span>
+                    </div>
+                    <div class="result-body" style="padding: 1.25rem;">
+                        <h3 style="font-size: 1.15rem; color: var(--text-main); margin-bottom: 0.5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.name }}</h3>
+                        <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1rem; flex: 1; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                            {{ item.description }}
+                        </p>
+                        
+                        <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.location }}</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                <span>{{ item.item_date }}</span>
+                            </div>
+                        </div>
+
+                        <div style="border-top: 1px solid var(--border-color); padding-top: 1rem; display: flex; justify-content: flex-end;">
+                            <a href="#" class="btn" style="background-color: #f1f5f9; color: var(--primary); font-size: 0.85rem; padding: 0.5rem 1rem;">View Details &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <div id="no-items-msg" style="display: none; text-align: center; padding: 3rem; background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--border-radius); margin-bottom: 3rem;">
+            <p class="text-muted">No items found matching this filter.</p>
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 4rem 2rem; background: #ffffff; border: 1px solid var(--border-color); border-radius: var(--border-radius); margin-bottom: 3rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;">📦</div>
+            <h2 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--text-main);">No items reported yet</h2>
+            <p class="text-muted">Be the first to report a lost or found item.</p>
+        </div>
+    {% endif %}
+
+    <!-- Bottom CTA -->
+    <div class="cta-banner">
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <div style="width: 56px; height: 56px; background-color: #f0fdfa; color: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+            <div>
+                <h3 style="font-size: 1.25rem; color: #1e293b; margin-bottom: 0.25rem;">Found something unattended on campus?</h3>
+                <p class="text-muted" style="margin: 0; font-size: 0.95rem;">Report it so the owner can be alerted.</p>
+            </div>
+        </div>
+        <a href="{{ url_for('report') if 'report' in request.endpoint else '/report' }}?type=found" class="btn btn-primary" style="padding: 0.85rem 1.5rem;">
+            Report a found item
         </a>
-        <a href="/search" class="btn btn-secondary">
-            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
-            Search for Item
-        </a>
-    </div>
-</section>
-
-<!-- Features Grid -->
-<div class="features-grid">
-    <div class="feature-card">
-        <div class="feature-icon">📷</div>
-        <h3 class="feature-title">Image Search</h3>
-        <p class="feature-desc">
-            Upload a photo of a missing or found item to instantaneously discover visually similar items on campus.
-        </p>
-    </div>
-
-    <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <h3 class="feature-title">AI Embeddings</h3>
-        <p class="feature-desc">
-            Powered by Google Gemini multimodal embeddings and FAISS index for high-accuracy visual matching.
-        </p>
-    </div>
-
-    <div class="feature-card">
-        <div class="feature-icon">🔍</div>
-        <h3 class="feature-title">Item Details</h3>
-        <p class="feature-desc">
-            Store location, category, date, and contact details seamlessly linked in MySQL database.
-        </p>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Drag and drop for the visual search box
+    function handleFileSelect(files) {
+        if (files && files[0]) {
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const previewBox = document.getElementById('preview-box');
+                const previewImg = document.getElementById('preview-img');
+                previewImg.src = e.target.result;
+                previewBox.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    const dropzone = document.getElementById('dropzone');
+    
+    if (dropzone) {
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropzone.style.borderColor = 'var(--primary)';
+                dropzone.style.backgroundColor = '#f8fafc';
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropzone.style.borderColor = '#e2e8f0';
+                dropzone.style.backgroundColor = 'transparent';
+            }, false);
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            document.getElementById('image-input').files = files;
+            handleFileSelect(files);
+        }, false);
+    }
+
+    // Filter tabs logic
+    function filterItems(status) {
+        // Update active tab styling
+        const tabs = document.querySelectorAll('.filter-tab');
+        tabs.forEach(tab => {
+            if (tab.innerText.includes(status) || (status === 'All' && tab.innerText === 'All Reports')) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
+        });
+
+        // Filter cards
+        const cards = document.querySelectorAll('.item-card');
+        let visibleCount = 0;
+        
+        cards.forEach(card => {
+            if (status === 'All' || card.getAttribute('data-status') === status) {
+                card.style.display = 'flex';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // Show/hide empty message
+        const msg = document.getElementById('no-items-msg');
+        if (msg) {
+            msg.style.display = visibleCount === 0 ? 'block' : 'none';
+        }
+    }
+</script>
 {% endblock %}

@@ -1,28 +1,28 @@
 {% extends "base.html" %}
 
-{% block title %}Multimodal Search Results - VisionMatch{% endblock %}
+{% block title %}Search Results - VisionMatch{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <h1 class="page-title">Multimodal Search Results</h1>
-    <p class="page-subtitle">Results ranked by Final Score combining Image Similarity (60%), Text Similarity (25%), and Metadata Score (15%).</p>
+<div class="mb-4">
+    <h1 style="font-size: 2rem; color: #1e293b; margin-bottom: 0.5rem;">Search Results</h1>
+    <p class="text-muted">Ranked by Final Score (Image, Text, and Metadata match)</p>
 </div>
 
-<!-- Query Summary Banner -->
-<div class="query-summary">
+<!-- Query Summary Card -->
+<div class="card flex items-center gap-4" style="padding: 1.5rem;">
     {% if query_image %}
-        <img src="/{{ query_image.replace('\\', '/') }}" alt="Uploaded Query Image" class="query-img">
+        <img src="/{{ query_image.replace('\\', '/') }}" alt="Uploaded Query Image" style="width: 80px; height: 80px; object-fit: cover; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
     {% endif %}
     <div>
-        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.25rem;">Search Criteria Processed</h3>
-        <p style="color: var(--text-muted); font-size: 0.95rem;">
+        <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem;">Search Criteria</h3>
+        <p class="text-muted" style="font-size: 0.95rem;">
             {% if query_text %}
-                <strong>Search Text:</strong> "{{ query_text }}" &bull;
+                <strong>Keywords:</strong> "{{ query_text }}" &bull;
             {% endif %}
             {% if matches %}
-                Found <strong>{{ matches|length }}</strong> matching item(s) ranked by Final Multimodal Score.
+                Found <strong>{{ matches|length }}</strong> potential matches.
             {% else %}
-                No matching items found.
+                No matches found.
             {% endif %}
         </p>
     </div>
@@ -36,49 +36,45 @@
                     <img src="/{{ match.image_path.replace('\\', '/') }}" alt="{{ match.item.name if match.item else 'Item' }}" class="result-img">
                 </div>
                 <div class="result-body">
-                    <div class="result-header">
-                        <h3 class="result-title">{{ match.item.name if match.item else 'Unknown Item' }}</h3>
+                    <div class="flex items-center" style="justify-content: space-between; margin-bottom: 0.5rem;">
+                        <h3 style="font-size: 1.15rem; color: var(--text-main);">{{ match.item.name if match.item else 'Unknown Item' }}</h3>
                         <span class="badge {% if match.item and match.item.status|lower == 'lost' %}badge-lost{% else %}badge-found{% endif %}">
                             {{ match.item.status if match.item else 'N/A' }}
                         </span>
                     </div>
 
-                    <div>
-                        <span class="category-tag">📂 {{ match.item.category if match.item else 'Category N/A' }}</span>
-                    </div>
-
-                    <p class="result-desc">
+                    <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1rem; flex: 1;">
                         {{ match.item.description if match.item else 'No description available.' }}
                     </p>
 
-                    <div class="meta-info">
-                        <div><strong>📍 Location:</strong> {{ match.item.location if match.item else 'N/A' }}</div>
-                        <div><strong>📅 Date:</strong> {{ match.item.item_date if match.item else 'N/A' }}</div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+                        <div style="margin-bottom: 0.25rem;"><strong>Location:</strong> {{ match.item.location if match.item else 'N/A' }}</div>
+                        <div><strong>Date:</strong> {{ match.item.item_date if match.item else 'N/A' }}</div>
                     </div>
 
-                    <!-- Multimodal Score Breakdown -->
-                    <div style="background-color: #f8fafc; border: 1px solid var(--card-border); border-radius: var(--radius-sm); padding: 0.75rem; margin-top: 1rem; font-size: 0.85rem;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
-                            <span>🖼️ Image Similarity (60%):</span>
-                            <strong>{{ "%.2f"|format(match.image_similarity * 100) }}%</strong>
+                    <!-- Score Breakdown -->
+                    <div style="background-color: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 0.75rem; margin-bottom: 1rem; font-size: 0.85rem;">
+                        <div class="flex" style="justify-content: space-between; margin-bottom: 0.25rem;">
+                            <span>Image (60%):</span>
+                            <strong>{{ "%.1f"|format(match.image_similarity * 100) }}%</strong>
                         </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
-                            <span>📝 Text Similarity (25%):</span>
-                            <strong>{{ "%.2f"|format(match.text_similarity * 100) }}%</strong>
+                        <div class="flex" style="justify-content: space-between; margin-bottom: 0.25rem;">
+                            <span>Text (25%):</span>
+                            <strong>{{ "%.1f"|format(match.text_similarity * 100) }}%</strong>
                         </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                            <span>🏷️ Metadata Score (15%):</span>
-                            <strong>{{ "%.2f"|format(match.metadata_score * 100) }}%</strong>
+                        <div class="flex" style="justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Metadata (15%):</span>
+                            <strong>{{ "%.1f"|format(match.metadata_score * 100) }}%</strong>
                         </div>
-                        <div style="display: flex; justify-content: space-between; border-top: 1px solid #e2e8f0; padding-top: 0.4rem; color: var(--primary); font-weight: 700; font-size: 0.95rem;">
-                            <span>🏆 Final Match Score:</span>
-                            <span>{{ "%.2f"|format(match.final_score * 100) }}%</span>
+                        <div class="flex" style="justify-content: space-between; border-top: 1px solid #e2e8f0; padding-top: 0.4rem; color: var(--primary); font-weight: 600;">
+                            <span>Final Match Score:</span>
+                            <span>{{ "%.1f"|format(match.final_score * 100) }}%</span>
                         </div>
                     </div>
                     
                     {% if current_user.is_authenticated and match.item and match.item.user_id != current_user.id %}
-                    <form action="{{ url_for('chat.start_chat', item_id=match.item.id) }}" method="POST" style="margin-top: 1rem;">
-                        <button type="submit" class="btn btn-action-primary" style="width: 100%;">Contact finder/owner</button>
+                    <form action="{{ url_for('chat.start_chat', item_id=match.item.id) }}" method="POST" style="margin-top: auto;">
+                        <button type="submit" class="btn btn-primary w-full">Contact Owner</button>
                     </form>
                     {% endif %}
                 </div>
@@ -86,19 +82,21 @@
         {% endfor %}
     </div>
 {% else %}
-    <div class="card" style="text-align: center; padding: 3rem 1.5rem; margin-bottom: 2rem;">
-        <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
-        <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-dark);">No Visually or Textually Similar Items Found</h2>
-        <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
-            No registered items matched your search criteria closely enough.
+    <div class="card text-center" style="padding: 4rem 2rem;">
+        <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;">🔍</div>
+        <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-main);">No similar items found</h2>
+        <p class="text-muted mb-4">
+            We couldn't find any items matching your criteria. Try adjusting your filters or search terms.
         </p>
-        <a href="/search" class="btn btn-action-primary">Try Another Search</a>
+        <a href="/search" class="btn btn-primary">Try Another Search</a>
     </div>
 {% endif %}
 
-<div style="text-align: center; margin-top: 2rem;">
-    <a href="/search" class="btn btn-secondary" style="background-color: #ffffff; color: var(--text-dark); border: 1px solid var(--card-border);">
-        &larr; Execute Another Search
+{% if matches %}
+<div class="text-center mt-4">
+    <a href="/search" class="btn btn-outline">
+        &larr; New Search
     </a>
 </div>
+{% endif %}
 {% endblock %}

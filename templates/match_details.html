@@ -1,84 +1,82 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container mt-4">
-    <h2 class="text-center mb-4">Potential Match</h2>
+<div class="mb-4 text-center">
+    <h1 style="font-size: 2.25rem; color: #1e293b; margin-bottom: 0.5rem;">Potential Match Discovered</h1>
+    <p class="text-muted" style="font-size: 1.1rem;">Review the lost and found items below. If they match, contact the owner!</p>
+</div>
 
-    <div class="row">
-        <!-- Lost Item -->
-        <div class="col-md-6">
-            <div class="card shadow-sm border-danger">
-                <div class="card-header bg-danger text-white text-center">
-                    <h4>Lost Item</h4>
-                </div>
-                <img src="/{{ lost_item.image_path }}" class="card-img-top" alt="Lost Item" style="max-height: 300px; object-fit: contain; background: #eee;">
-                <div class="card-body">
-                    <h5 class="card-title">{{ lost_item.name }}</h5>
-                    <p class="card-text">{{ lost_item.description }}</p>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><strong>Location:</strong> {{ lost_item.location }}</li>
-                        <li class="list-group-item"><strong>Date:</strong> {{ lost_item.item_date }}</li>
-                    </ul>
-                </div>
-            </div>
+<div class="grid-2">
+    <!-- Lost Item -->
+    <div class="card" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+        <div style="background-color: #fef2f2; color: #b91c1c; padding: 1rem; text-align: center; font-weight: 700; border-bottom: 1px solid #fecaca;">
+            LOST ITEM
         </div>
-
-        <!-- Found Item -->
-        <div class="col-md-6">
-            <div class="card shadow-sm border-success">
-                <div class="card-header bg-success text-white text-center">
-                    <h4>Found Item</h4>
-                </div>
-                <img src="/{{ found_item.image_path }}" class="card-img-top" alt="Found Item" style="max-height: 300px; object-fit: contain; background: #eee;">
-                <div class="card-body">
-                    <h5 class="card-title">{{ found_item.name }}</h5>
-                    <p class="card-text">{{ found_item.description }}</p>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><strong>Location:</strong> {{ found_item.location }}</li>
-                        <li class="list-group-item"><strong>Date:</strong> {{ found_item.item_date }}</li>
-                    </ul>
-                </div>
+        <div class="result-img-container" style="height: 250px;">
+            <img src="/{{ lost_item.image_path.replace('\\', '/') }}" alt="Lost Item" class="result-img" style="object-fit: contain; padding: 1rem;">
+        </div>
+        <div class="result-body" style="padding: 1.5rem;">
+            <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--text-main);">{{ lost_item.name }}</h3>
+            <p class="text-muted" style="font-size: 0.95rem; margin-bottom: 1rem; flex: 1;">{{ lost_item.description }}</p>
+            <div style="font-size: 0.9rem; color: var(--text-muted); border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                <div style="margin-bottom: 0.3rem;"><strong>Location:</strong> {{ lost_item.location }}</div>
+                <div><strong>Date:</strong> {{ lost_item.item_date }}</div>
             </div>
         </div>
     </div>
 
-    <!-- Match Score -->
-    <div class="row mt-4 justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-info text-white text-center">
-                    <h4>Match Score Breakdown</h4>
-                </div>
-                <div class="card-body">
-                    <table class="table table-bordered text-center">
-                        <thead>
-                            <tr>
-                                <th>Image (60%)</th>
-                                <th>Text (25%)</th>
-                                <th>Metadata (15%)</th>
-                                <th>Final Score</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>{{ (alert.image_score * 100)|round(1) }}%</td>
-                                <td>{{ (alert.text_score * 100)|round(1) }}%</td>
-                                <td>{{ (alert.metadata_score * 100)|round(1) }}%</td>
-                                <td><strong class="text-primary">{{ (alert.final_score * 100)|round(1) }}%</strong></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+    <!-- Found Item -->
+    <div class="card" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+        <div style="background-color: #f0fdf4; color: #15803d; padding: 1rem; text-align: center; font-weight: 700; border-bottom: 1px solid #bbf7d0;">
+            FOUND ITEM
+        </div>
+        <div class="result-img-container" style="height: 250px;">
+            <img src="/{{ found_item.image_path.replace('\\', '/') }}" alt="Found Item" class="result-img" style="object-fit: contain; padding: 1rem;">
+        </div>
+        <div class="result-body" style="padding: 1.5rem;">
+            <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--text-main);">{{ found_item.name }}</h3>
+            <p class="text-muted" style="font-size: 0.95rem; margin-bottom: 1rem; flex: 1;">{{ found_item.description }}</p>
+            <div style="font-size: 0.9rem; color: var(--text-muted); border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                <div style="margin-bottom: 0.3rem;"><strong>Location:</strong> {{ found_item.location }}</div>
+                <div><strong>Date:</strong> {{ found_item.item_date }}</div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Match Score -->
+<div class="card" style="max-width: 800px; margin: 0 auto; text-align: center; padding: 2rem;">
+    <h3 style="font-size: 1.25rem; margin-bottom: 1.5rem;">AI Match Breakdown</h3>
+    
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; margin-bottom: 2rem;">
+        <div style="text-align: center;">
+            <div class="text-muted" style="font-size: 0.85rem; margin-bottom: 0.25rem;">Image (60%)</div>
+            <div style="font-size: 1.25rem; font-weight: 600; color: #334155;">{{ (alert.image_score * 100)|round(1) }}%</div>
+        </div>
+        <div style="border-left: 1px solid var(--border-color);"></div>
+        <div style="text-align: center;">
+            <div class="text-muted" style="font-size: 0.85rem; margin-bottom: 0.25rem;">Text (25%)</div>
+            <div style="font-size: 1.25rem; font-weight: 600; color: #334155;">{{ (alert.text_score * 100)|round(1) }}%</div>
+        </div>
+        <div style="border-left: 1px solid var(--border-color);"></div>
+        <div style="text-align: center;">
+            <div class="text-muted" style="font-size: 0.85rem; margin-bottom: 0.25rem;">Metadata (15%)</div>
+            <div style="font-size: 1.25rem; font-weight: 600; color: #334155;">{{ (alert.metadata_score * 100)|round(1) }}%</div>
+        </div>
+        <div style="border-left: 1px solid var(--border-color);"></div>
+        <div style="text-align: center;">
+            <div class="text-muted" style="font-size: 0.85rem; margin-bottom: 0.25rem; color: var(--primary); font-weight: 600;">FINAL SCORE</div>
+            <div style="font-size: 1.75rem; font-weight: 700; color: var(--primary);">{{ (alert.final_score * 100)|round(1) }}%</div>
         </div>
     </div>
 
     <!-- Actions -->
-    <div class="row mt-4 mb-5 text-center">
-        <div class="col-12">
-            <form action="{{ url_for('chat.start_chat', item_id=other_item.id) }}" method="POST">
-                <button type="submit" class="btn btn-primary btn-lg px-5">Contact Owner</button>
-            </form>
-        </div>
-    </div>
+    <form action="{{ url_for('chat.start_chat', item_id=other_item.id) }}" method="POST">
+        <button type="submit" class="btn btn-primary" style="padding: 1rem 3rem; font-size: 1.1rem;">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-right: 0.5rem;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+            </svg>
+            Contact Owner
+        </button>
+    </form>
 </div>
 {% endblock %}

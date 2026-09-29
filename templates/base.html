@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}VisionMatch - Smart College Lost & Found{% endblock %}</title>
+    <title>{% block title %}VisionMatch{% endblock %}</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     {% block extra_head %}{% endblock %}
@@ -17,29 +17,28 @@
     <!-- Navigation Header -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="/" class="brand-logo">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-                </svg>
-                VisionMatch
-            </a>
+            <a href="/" class="brand-logo">VisionMatch</a>
             <ul class="nav-links">
-                <li><a href="/" class="{% if request.endpoint == 'home' %}active{% endif %}">Home</a></li>
+                <li><a href="/search" class="{% if request.endpoint in ['search', 'home'] %}active{% endif %}">Search</a></li>
                 <li><a href="/report" class="{% if request.endpoint == 'report' %}active{% endif %}">Report Item</a></li>
-                <li><a href="/search" class="{% if request.endpoint == 'search' %}nav-btn{% else %}nav-btn{% endif %}">Search Item</a></li>
+                
                 {% if current_user.is_authenticated %}
                 <li><a href="{{ url_for('chat.my_chats') }}" class="{% if request.endpoint == 'chat.my_chats' %}active{% endif %}">My Chats</a></li>
                 <li>
                     <a href="{{ url_for('notifications.index') }}" class="{% if request.endpoint == 'notifications.index' %}active{% endif %}" style="position: relative;">
                         Notifications
-                        <span id="notif-badge" style="display: none; position: absolute; top: -5px; right: -15px; background-color: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.75rem; font-weight: bold;">0</span>
+                        <span id="notif-badge" class="nav-badge">0</span>
                     </a>
                 </li>
-                <li><span style="color: #666; font-weight: 500; margin-left: 10px;">Hello, {{ current_user.name }}</span></li>
-                <li><a href="{{ url_for('auth.logout') }}" style="color: #d9534f; margin-left: 10px;">Logout</a></li>
+                <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+                <li>
+                    <div class="user-avatar" title="{{ current_user.name }}">
+                        {{ current_user.name[0]|upper }}
+                    </div>
+                </li>
                 {% else %}
-                <li><a href="{{ url_for('auth.login') }}" style="margin-left: 10px;">Login</a></li>
-                <li><a href="{{ url_for('auth.register') }}" class="nav-btn">Register</a></li>
+                <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+                <li><a href="{{ url_for('auth.register') }}">Register</a></li>
                 {% endif %}
             </ul>
         </div>
@@ -52,7 +51,7 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <p>&copy; 2026 VisionMatch &bull; Smart College Lost & Found System</p>
+        <p>&copy; 2026 VisionMatch</p>
     </footer>
 
     {% block scripts %}{% endblock %}
@@ -67,7 +66,7 @@
                     const badge = document.getElementById('notif-badge');
                     if (data.count > 0) {
                         badge.textContent = data.count;
-                        badge.style.display = 'inline-block';
+                        badge.style.display = 'block';
                     } else {
                         badge.style.display = 'none';
                     }
