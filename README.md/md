@@ -1,0 +1,37 @@
+# VisionMatch 👁️🔎
+
+VisionMatch is an intelligent visual product identification and similarity search engine built with Python, Flask, FAISS, and Google's Gemini API. It allows users to upload product images and instantly retrieve visually and contextually similar items using deep multimodal vector embeddings.
+
+---
+
+## 🚀 Features
+
+* **Visual Similarity Search:** Uses **FAISS (Facebook AI Similarity Search)** for high-speed, scalable vector indexing and nearest-neighbor matching.
+* **Multimodal Embeddings:** Harnesses **Gemini API** visual models to generate rich semantic vector representations of product images.
+* **Relational Data Management:** Stores product metadata, categories, and image paths using **MySQL** / **SQLite**.
+* **RESTful Flask Backend:** Lightweight, robust Web API for handling image uploads, query processing, and returning ranked recommendations.
+
+---
+
+## 🛠️ Tech Stack
+
+* **Backend:** Python 3.x, Flask
+* **AI/ML:** Google Gemini API, FAISS (`faiss-cpu`)
+* **Database:** MySQL / SQLite
+* **Utilities:** NumPy, Pillow (PIL), python-dotenv
+
+---
+
+## 📦 Project Structure
+
+```text
+visionmatch/
+├── app.py                 # Flask application entry point
+├── config.py              # Application configurations & DB settings
+├── database.py            # Database connection & query helper routines
+├── embeddings.py          # Gemini API integration & image embedding processing
+├── faiss_index.py         # FAISS vector database indexing and search logic
+├── requirements.txt       # Python dependency requirements
+├── static/                # Static assets & user upload storage
+├── templates/             # HTML templates / UI components
+└── .env                   # Environment variables (DO NOT COMMIT)
