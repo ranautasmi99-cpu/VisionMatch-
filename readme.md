@@ -95,4 +95,10 @@ visionmatch/
 - Uploads are limited to jpg/png with a size limit.
 - All SQL queries use parameter placeholders.
 
+## Screenshots
 
+(Add your screenshots here: home page, search results, match page, chat.)
+
+## Team
+
+Built as a college project by (your names).
