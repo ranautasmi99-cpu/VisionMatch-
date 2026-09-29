@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Potential Match</h2>
+
+    <div class="row">
+        <!-- Lost Item -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-danger">
+                <div class="card-header bg-danger text-white text-center">
+                    <h4>Lost Item</h4>
+                </div>
+                <img src="/{{ lost_item.image_path }}" class="card-img-top" alt="Lost Item" style="max-height: 300px; object-fit: contain; background: #eee;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ lost_item.name }}</h5>
+                    <p class="card-text">{{ lost_item.description }}</p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Location:</strong> {{ lost_item.location }}</li>
+                        <li class="list-group-item"><strong>Date:</strong> {{ lost_item.item_date }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Found Item -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-success">
+                <div class="card-header bg-success text-white text-center">
+                    <h4>Found Item</h4>
+                </div>
+                <img src="/{{ found_item.image_path }}" class="card-img-top" alt="Found Item" style="max-height: 300px; object-fit: contain; background: #eee;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ found_item.name }}</h5>
+                    <p class="card-text">{{ found_item.description }}</p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Location:</strong> {{ found_item.location }}</li>
+                        <li class="list-group-item"><strong>Date:</strong> {{ found_item.item_date }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Match Score -->
+    <div class="row mt-4 justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white text-center">
+                    <h4>Match Score Breakdown</h4>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered text-center">
+                        <thead>
+                            <tr>
+                                <th>Image (60%)</th>
+                                <th>Text (25%)</th>
+                                <th>Metadata (15%)</th>
+                                <th>Final Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ (alert.image_score * 100)|round(1) }}%</td>
+                                <td>{{ (alert.text_score * 100)|round(1) }}%</td>
+                                <td>{{ (alert.metadata_score * 100)|round(1) }}%</td>
+                                <td><strong class="text-primary">{{ (alert.final_score * 100)|round(1) }}%</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="row mt-4 mb-5 text-center">
+        <div class="col-12">
+            <form action="{{ url_for('chat.start_chat', item_id=other_item.id) }}" method="POST">
+                <button type="submit" class="btn btn-primary btn-lg px-5">Contact Owner</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

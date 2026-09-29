@@ -124,7 +124,9 @@ def search_multimodal(
     query_category=None,
     query_location=None,
     query_status=None,
-    top_k=5
+    top_k=5,
+    query_img_vec_2d=None,
+    query_txt_vec_2d=None
 ):
     """
     Performs Multimodal Similarity Search combining:
@@ -146,10 +148,13 @@ def search_multimodal(
     image_sim_scores = [0.5] * num_items
     image_distances = [999.0] * num_items
 
-    if query_image_path and os.path.exists(query_image_path) and os.path.exists(INDEX_FILE):
+    if (query_image_path and os.path.exists(query_image_path) and os.path.exists(INDEX_FILE)) or query_img_vec_2d is not None:
         img_index = faiss.read_index(INDEX_FILE)
-        img_vec = get_image_embedding(query_image_path)
-        img_vec_2d = np.array([img_vec], dtype=np.float32)
+        if query_img_vec_2d is None:
+            img_vec = get_image_embedding(query_image_path)
+            img_vec_2d = np.array([img_vec], dtype=np.float32)
+        else:
+            img_vec_2d = query_img_vec_2d
 
         distances, indices = img_index.search(img_vec_2d, num_items)
 
@@ -162,10 +167,13 @@ def search_multimodal(
     # 2. Compute Text Distances
     text_sim_scores = [0.5] * num_items
 
-    if query_text and query_text.strip() and os.path.exists(TEXT_INDEX_FILE):
+    if ((query_text and query_text.strip()) or query_txt_vec_2d is not None) and os.path.exists(TEXT_INDEX_FILE):
         txt_index = faiss.read_index(TEXT_INDEX_FILE)
-        txt_vec = get_text_embedding(query_text.strip())
-        txt_vec_2d = np.array([txt_vec], dtype=np.float32)
+        if query_txt_vec_2d is None:
+            txt_vec = get_text_embedding(query_text.strip())
+            txt_vec_2d = np.array([txt_vec], dtype=np.float32)
+        else:
+            txt_vec_2d = query_txt_vec_2d
 
         txt_distances, txt_indices = txt_index.search(txt_vec_2d, num_items)
 

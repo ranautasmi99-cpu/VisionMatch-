@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}My Chats - VisionMatch{% endblock %}
+
+{% block content %}
+<div class="chats-container" style="max-width: 800px; margin: 2rem auto; padding: 2rem; background-color: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <h2>My Chats</h2>
+    
+    {% if conversations %}
+        <ul style="list-style-type: none; padding: 0;">
+        {% for conv in conversations %}
+            <li style="border-bottom: 1px solid #eee; padding: 1rem 0;">
+                <a href="{{ url_for('chat.room', conversation_id=conv.id) }}" style="text-decoration: none; color: inherit; display: block;">
+                    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                        <h3 style="margin: 0; color: #007bff;">{{ conv.other_user_name }}</h3>
+                        <small style="color: #888;">{{ conv.last_message_time.strftime('%Y-%m-%d %H:%M') if conv.last_message_time else 'No messages yet' }}</small>
+                    </div>
+                    <p style="margin: 0.5rem 0 0 0; font-weight: 500;">Item: {{ conv.item_name }}</p>
+                    <p style="margin: 0.25rem 0 0 0; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        {{ conv.last_message if conv.last_message else 'No messages' }}
+                    </p>
+                </a>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>You have no active chats.</p>
+    {% endif %}
+</div>
+{% endblock %}

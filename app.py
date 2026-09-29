@@ -1,12 +1,37 @@
-from flask import Flask, render_template, request, send_from_directory
+from flask import Flask, render_template, request, send_from_directory, redirect, url_for
 import os
 import uuid
+from flask_login import LoginManager, current_user, login_required
 
 from search import search_similar_images, add_image_to_index, search_multimodal
-from database import get_item_by_image_path, insert_item
+from database import get_item_by_image_path, insert_item, User, get_user_by_id
+from auth import auth_bp
+from chat import chat_bp
+from notifications import notifications_bp
+from matching import matching_bp, find_and_notify_matches
+from dotenv import load_dotenv
 
+load_dotenv()
 
 app = Flask(__name__)
+app.secret_key = os.getenv("SECRET_KEY", "fallback_secret_key")
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5 MB max upload size
+
+login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    user_data = get_user_by_id(user_id)
+    if user_data:
+        return User(user_data['id'], user_data['name'], user_data['email'])
+    return None
+
+app.register_blueprint(auth_bp)
+app.register_blueprint(chat_bp)
+app.register_blueprint(notifications_bp)
+app.register_blueprint(matching_bp)
 
 # Folders for uploads & temporary query images
 QUERY_FOLDER = "query_images"
@@ -32,21 +57,27 @@ def home():
     return render_template("index.html")
 
 
+from werkzeug.utils import secure_filename
+
 @app.route("/report", methods=["GET", "POST"])
+@login_required
 def report():
     if request.method == "GET":
         return render_template("report.html")
 
     # Handle POST request for item report
-    name = request.form.get("name")
-    description = request.form.get("description")
-    category = request.form.get("category")
-    status = request.form.get("status")
-    location = request.form.get("location")
-    item_date = request.form.get("item_date")
+    name = request.form.get("name", "").strip()
+    description = request.form.get("description", "").strip()
+    category = request.form.get("category", "").strip()
+    status = request.form.get("status", "").strip()
+    location = request.form.get("location", "").strip()
+    item_date = request.form.get("item_date", "").strip()
 
+    # Form Validation: No empty text, max lengths
     if not all([name, description, category, status, location, item_date]):
-        return render_template("report.html", error="All fields are required.")
+        return render_template("report.html", error="All fields are required and cannot be empty.")
+    if len(name) > 100 or len(description) > 500 or len(location) > 100:
+        return render_template("report.html", error="Input exceeds maximum allowed length.")
 
     if "image" not in request.files:
         return render_template("report.html", error="Please upload an item image.")
@@ -60,7 +91,7 @@ def report():
     if extension not in [".jpg", ".jpeg", ".png"]:
         return render_template("report.html", error="Only JPG, JPEG and PNG images are allowed.")
 
-    filename = str(uuid.uuid4()) + extension
+    filename = secure_filename(str(uuid.uuid4()) + extension)
     image_path = os.path.join(UPLOAD_FOLDER, filename).replace("\\", "/")
 
     # Save uploaded item image
@@ -75,12 +106,19 @@ def report():
             status=status,
             image_path=image_path,
             location=location,
-            item_date=item_date
+            item_date=item_date,
+            user_id=current_user.id
         )
 
         # 2. Generate text representation & update FAISS image + text indices
         text_rep = f"{name} | {description} | {category}"
         add_image_to_index(image_path, text_representation=text_rep)
+
+        # 3. Find matches and notify owners
+        try:
+            find_and_notify_matches(item_id)
+        except Exception as match_e:
+            print(f"Error finding matches: {match_e}")
 
         return render_template("report.html", success=True, item_id=item_id)
     except Exception as e:
@@ -88,6 +126,7 @@ def report():
 
 
 @app.route("/search", methods=["GET", "POST"])
+@login_required
 def search():
     if request.method == "GET":
         return render_template("search.html")
@@ -106,7 +145,7 @@ def search():
         if extension not in [".jpg", ".jpeg", ".png"]:
             return render_template("search.html", error="Only JPG, JPEG and PNG images are allowed.")
 
-        filename = str(uuid.uuid4()) + extension
+        filename = secure_filename(str(uuid.uuid4()) + extension)
         query_path = os.path.join(QUERY_FOLDER, filename).replace("\\", "/")
         file.save(query_path)
 
