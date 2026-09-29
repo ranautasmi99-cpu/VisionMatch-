@@ -1,37 +1,98 @@
-# VisionMatch 👁️🔎
+# VisionMatch
 
-VisionMatch is an intelligent visual product identification and similarity search engine built with Python, Flask, FAISS, and Google's Gemini API. It allows users to upload product images and instantly retrieve visually and contextually similar items using deep multimodal vector embeddings.
+**Snap it. Search it. Get it back.**
 
----
+VisionMatch is an AI-powered system that helps college students recover their belongings. Users report an item with a photo and/or a text description, and the system finds the closest matches automatically.
 
-## 🚀 Features
+## Features
 
-* **Visual Similarity Search:** Uses **FAISS (Facebook AI Similarity Search)** for high-speed, scalable vector indexing and nearest-neighbor matching.
-* **Multimodal Embeddings:** Harnesses **Gemini API** visual models to generate rich semantic vector representations of product images.
-* **Relational Data Management:** Stores product metadata, categories, and image paths using **MySQL** / **SQLite**.
-* **RESTful Flask Backend:** Lightweight, robust Web API for handling image uploads, query processing, and returning ranked recommendations.
+- **Multimodal search:** search with a photo, a text description, or both
+- **Ranked results:** every match gets a score breakdown (image, text, metadata, final)
+- **Authentication:** register, login and logout with hashed passwords
+- **Safeguards:** upload validation, server-side access checks, protected SQL queries, block user
+- **Chat:** the owner and the finder talk inside the app, so no phone or email is shared
+- **Notifications:** in-app alerts with an unread count
+- **Automatic match alerts:** every new report is compared with the opposite report type, and the owner is notified if the score is high enough
 
----
+## How it works
 
-## 🛠️ Tech Stack
+```
+Report item -> Gemini embedding -> FAISS search -> Score >= threshold -> Notification -> Chat
+```
 
-* **Backend:** Python 3.x, Flask
-* **AI/ML:** Google Gemini API, FAISS (`faiss-cpu`)
-* **Database:** MySQL / SQLite
-* **Utilities:** NumPy, Pillow (PIL), python-dotenv
+**Final score = 60% image similarity + 25% text similarity + 15% metadata alignment**
 
----
+1. The photo and text are converted into embeddings (lists of numbers) using Google Gemini Embedding 2.
+2. FAISS finds the closest embeddings quickly.
+3. MySQL stores the item details (name, category, location, date, type, owner).
+4. The three scores are combined with the weights above to rank the results.
 
-## 📦 Project Structure
+## Tech stack
 
-```text
+| Part | Technology |
+|---|---|
+| Backend | Python, Flask, Flask-Login |
+| Database | MySQL |
+| Vector search | FAISS |
+| AI embeddings | Google Gemini API |
+| Other | NumPy, REST APIs, JavaScript (chat polling) |
+
+## Setup
+
+1. Clone the repository
+```
+   git clone https://github.com/ranautasmi99-cpu/VisionMatch-.git
+   cd VisionMatch-
+```
+
+2. Create and activate a virtual environment
+```
+   python -m venv venv
+   venv\Scripts\activate
+```
+
+3. Install the packages
+```
+   pip install -r requirements.txt
+```
+
+4. Create a MySQL database, then run the SQL in `migrations.sql` to create the tables.
+
+5. Create a `.env` file in the main folder (see `.env.example`):
+```
+   GEMINI_API_KEY=your_key_here
+   DB_HOST=localhost
+   DB_USER=your_user
+   DB_PASSWORD=your_password
+   DB_NAME=your_database
+   SECRET_KEY=any_long_random_text
+   MATCH_THRESHOLD=0.75
+```
+
+6. Run the app
+```
+   python app.py
+```
+   Then open the link shown in the terminal.
+
+## Project structure
+
+```
 visionmatch/
-├── app.py                 # Flask application entry point
-├── config.py              # Application configurations & DB settings
-├── database.py            # Database connection & query helper routines
-├── embeddings.py          # Gemini API integration & image embedding processing
-├── faiss_index.py         # FAISS vector database indexing and search logic
-├── requirements.txt       # Python dependency requirements
-├── static/                # Static assets & user upload storage
-├── templates/             # HTML templates / UI components
-└── .env                   # Environment variables (DO NOT COMMIT)
+  app.py            main Flask app
+  templates/        HTML pages
+  static/           CSS and uploaded images
+  migrations.sql    all database tables
+  requirements.txt  Python packages
+  .env              secrets (not uploaded to GitHub)
+```
+
+## Security notes
+
+- Passwords are stored as hashes, never as plain text.
+- Only the two users in a chat can open it (checked on the server).
+- Email and phone numbers are never shown publicly.
+- Uploads are limited to jpg/png with a size limit.
+- All SQL queries use parameter placeholders.
+
+
